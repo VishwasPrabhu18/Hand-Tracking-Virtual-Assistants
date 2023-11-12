@@ -4,14 +4,15 @@ import time
 import math
 
 class handDetector():
-    def __init__(self, mode=False, maxHands=2, detectionCon=0.5, trackCon=0.5):
+    def __init__(self, mode=False, maxHands=2, modelCom=1, detectionCon=0.5, trackCon=0.5):
         self.mode = mode
         self.maxHands = maxHands
+        self.modelCom = modelCom
         self.detectionCon = detectionCon
         self.trackCon = trackCon
         
         self.mpHands = mp.solutions.hands
-        self.hands = self.mpHands.Hands(self.mode, self.maxHands, self.detectionCon, self.trackCon)
+        self.hands = self.mpHands.Hands(self.mode, self.maxHands, self.modelCom, self.detectionCon, self.trackCon)
         
         self.mpDraw = mp.solutions.drawing_utils
         self.tipIds = [4, 8, 12, 16, 20]
@@ -45,12 +46,13 @@ class handDetector():
                 
                 if draw:
                     cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
-                    xMin, xMax = min(xList), max(xList)
-                    yMin, yMax = min(yList), may(yList)
-                    bBox = xMin, yMin, xMax, yMax
+            
+            xMin, xMax = min(xList), max(xList)
+            yMin, yMax = min(yList), max(yList)
+            bBox = xMin, yMin, xMax, yMax
                     
-                    if draw:
-                        cv2.circle(img, (bBox[0], bBox[1]), (bBox[2]+20, bBox[3]+20), (0, 255, 0))
+            if draw:
+                cv2.rectangle(img, (bBox[0], bBox[1]), (bBox[2]+20, bBox[3]+20), (0, 255, 0), 2)
         
         return self.lmList, bBox
     
@@ -78,10 +80,10 @@ class handDetector():
         if draw:
             cv2.circle(img, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
             cv2.circle(img, (x2, y2), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
             cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
             
-            length = math.hypot(x2-x1, y2-y1)
+        length = math.hypot(x2-x1, y2-y1)
             
         return length, img, [x1, y1, x2, y2, cx, cy]                
 
@@ -101,12 +103,11 @@ def mainMethod():
         fps = 1 / (cTime - pTime)
         pTime = cTime
 
-        cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3,
-                    (255, 0, 255), 3)
+        cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
         cv2.imshow("Image", img)
         cv2.waitKey(1)
 
 
-if _name_ == "__main__":
+if __name__ == "__main__":
     mainMethod()
