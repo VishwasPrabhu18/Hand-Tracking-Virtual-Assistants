@@ -1,4 +1,2 @@
-import cv2
-import mediapipe as mp
-import time
-import math
+def mainMethod():
+    print("Hello, I'm Your Virtual Assistant!")
