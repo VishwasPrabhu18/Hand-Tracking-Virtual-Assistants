@@ -26,6 +26,33 @@ class handDetector():
                     self.mpDraw.draw_landmarks(img, handLms, self.mpHands.HAND_CONNECTIONS)
     
         return img
+    
+    def findPosition(self, img, handNo=0, draw=True):
+        xList = []
+        yList = []
+        bBox = []
+        self.lmList = []
+        
+        if self.results.multi_hand_landmarks:
+            myHand = self.results.multi_hand_landmarks[handNo]
+            
+            for id, lm in enumerate(myHand.landmark):
+                h, w, c = img.shape
+                cx, cy = int(lm.x * w), int(lm.y * h)
+                xList.append(cx)
+                yList.append(cy)
+                self.lmList.append([id, cx, cy])
+                
+                if draw:
+                    cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+                    xMin, xMax = min(xList), max(xList)
+                    yMin, yMax = min(yList), may(yList)
+                    bBox = xMin, yMin, xMax, yMax
+                    
+                    if draw:
+                        cv2.circle(img, (bBox[0], bBox[1]), (bBox[2]+20, bBox[3]+20), (0, 255, 0))
+        
+        return self.lmList, bBox
 
 def mainMethod():
     print("Hello, I'm Your Virtual Assistant!")
